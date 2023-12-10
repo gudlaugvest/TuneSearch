@@ -32,7 +32,6 @@ web/sites/README.txt
 web/sites/*/settings.production.php
 web/sites/*/settings.staging.php
 
-
 # Ignore paths that contain user-generated content.
 web/sites/*/files
 web/sites/*/private
