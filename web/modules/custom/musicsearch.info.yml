@@ -1,8 +1,7 @@
-name: "Hello World"
-description: "Hello World Module"
+name: Music Search
+description: 'Music Search Module'
 type: module
 core_version_requirement: ^10
 package: Custom
 dependencies:
   - drupal:views
-

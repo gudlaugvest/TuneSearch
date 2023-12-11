@@ -1,0 +1,15 @@
+music_search.music:
+  path: '/music'
+  defaults:
+    _controller: Drupal\music_search\Controller\MusicSearchControler:musicSearch
+    _title: 'Music Search Route'
+  requirements:
+    _permission: 'access content'
+
+music_search.greeting_form:
+  path: '/admin/config/salutation-configuration'
+  defaults:
+    _form: Drupal\music_search\Form\SalutationConfigurationForm
+    _title: 'Salutation configuration'
+  requirements:
+    _permission: 'administer site configuration'
