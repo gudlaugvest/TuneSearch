@@ -1,0 +1,7 @@
+name: Music Search
+description: 'Music Search Module'
+core_version_requirement: ^10
+type: module
+package: Custom
+dependencies:
+  - drupal:views

@@ -25,6 +25,7 @@
         "drupal/gin_toolbar": "^1.0@rc",
         "drupal/media_remote_audio": "^1.0",
         "drupal/module_filter": "^4.0",
+        "drupal/oauth2_client": "^4.1",
         "drupal/pathauto": "^1.12",
         "drush/drush": "^12.4"
     },

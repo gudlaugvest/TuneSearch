@@ -1,0 +1,16 @@
+spotify_api.spotify:
+  path: '/spotify_api'
+  defaults:
+    _controller: 'Drupal\spotify_api\Controller\SpotifyApiController::spotifyAPI'
+    _title: 'Spotify API'
+  requirements:
+    _permission: 'access content'
+
+
+spotify_api.spotify_form:
+  path: 'admin/config/spotify/api'
+  defaults:
+    _form: 'Drupal\spotify_api\Form\SpotifyApiConfigurationForm'
+    _title: 'Spotify API form'
+  requirements:
+    _permission: 'administer site configuration'
