@@ -18,4 +18,15 @@ use Drupal\Core\Routing\RouteMatchInterface;
    }
  }
 
+/**
+ * Implements hook_install().
+ */
+ function spotify_api_install() {
+  // Set default configuration values.
+  $config = \Drupal::configFactory()->getEditable('spotify_api.settings');
+  $config->set('client_id', '');
+  $config->set('client_secret', '');
+  $config->save();
+}
+
 

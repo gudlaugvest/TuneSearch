@@ -1,12 +1,11 @@
 <?php
+// modules/custom/spotify_api/src/Form/SpotifyApiConfigurationForm.php
+
 namespace Drupal\spotify_api\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
-/**
- * Form for configuring Spotify API settings.
- */
 class SpotifyApiConfigurationForm extends ConfigFormBase {
 
   /**
@@ -20,27 +19,27 @@ class SpotifyApiConfigurationForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'spotify_api_config_form';
+    return 'spotify_api_configuration_form';
   }
 
   /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->config('spotify_api.custom_spotify_api');
+    $config = $this->config('spotify_api.settings');
 
-    // Spotify Client ID
-    $form['spotify_client_id'] = [
+    $form['client_id'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Spotify Client ID'),
-      '#default_value' => $config->get('spotify_client_id'),
+      '#title' => $this->t('Client ID'),
+      '#default_value' => $config->get('client_id'),
+      '#description' => $this->t('Spotify API client ID.'),
     ];
 
-    // Spotify Client Secret
-    $form['spotify_client_secret'] = [
+    $form['client_secret'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Spotify Client Secret'),
-      '#default_value' => $config->get('spotify_client_secret'),
+      '#title' => $this->t('Client Secret'),
+      '#default_value' => $config->get('client_secret'),
+      '#description' => $this->t('Spotify API client secret.'),
     ];
 
     return parent::buildForm($form, $form_state);
@@ -50,12 +49,11 @@ class SpotifyApiConfigurationForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $this->config('spotify_api.settings')
-      ->set('spotify_client_id', $form_state->getValue('spotify_client_id'))
-      ->set('spotify_client_secret', $form_state->getValue('spotify_client_secret'))
+    $config = $this->configFactory->getEditable('spotify_api.settings');
+    $config->set('client_id', $form_state->getValue('client_id'))
+      ->set('client_secret', $form_state->getValue('client_secret'))
       ->save();
 
     parent::submitForm($form, $form_state);
   }
 }
-

@@ -7,7 +7,7 @@ spotify_api.spotify:
     _permission: 'access content'
 
 
-spotify_api.spotify_form:
+spotify_api.configuration:
   path: 'admin/config/spotify/api'
   defaults:
     _form: 'Drupal\spotify_api\Form\SpotifyApiConfigurationForm'
