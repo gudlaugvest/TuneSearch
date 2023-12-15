@@ -1,114 +1,106 @@
 <?php
 
-/**
- * @file
- * SpotifyApiService class.
- */
+namespace Drupal\spotify_api;
 
-namespace Drupal\spotify;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Psr\Log\LoggerInterface;
 
 class SpotifyApiService {
 
-  const SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token';
+  private $tokenEndpoint = 'https://accounts.spotify.com/api/token';
+  private $config;
+  private $logger;
 
-  protected $clientId;
-  protected $clientSecret;
-  protected $accessToken;
-
-  /**
-   * SpotifyApiService constructor.
-   */
-  public function __construct() {
-    $this->clientId = \Drupal::config('spotify.settings')->get('client_id');
-    $this->clientSecret = \Drupal::config('spotify.settings')->get('client_secret');
+  public function __construct(ConfigFactoryInterface $configFactory, LoggerInterface $logger) {
+    $this->config = $configFactory->get('spotify_api.settings');
+    $this->logger = $logger;
   }
 
-  /**
-   * Set the access token.
-   *
-   * @param string $token
-   *   The Spotify access token.
-   */
-  public function setToken($token) {
-    $this->accessToken = $token;
-  }
-
-  /**
-   * Get the access token.
-   *
-   * @return string|null
-   *   The Spotify access token or null if not set.
-   */
   public function getToken() {
-    return $this->accessToken;
-  }
+    // Retrieve client ID and client secret from Drupal configuration.
+    $clientId = $this->config->get('client_id');
+    $clientSecret = $this->config->get('client_secret');
+    \Drupal::logger('spotify_api')->notice('@client_id');
 
-  /**
-   * Reset the access token.
-   */
-  public function resetToken() {
-    $this->accessToken = '';
-  }
 
-  /**
-   * Perform Spotify API authorization with code.
-   *
-   * @return string
-   *   The access token obtained.
-   */
-  public function accessWithCodeAuthorization() {
-    $postData = [
-      'grant_type' => 'client_credentials',
-      'client_id' => $this->clientId,
-      'client_secret' => $this->clientSecret,
-    ];
 
-    $headers = [
-      'Content-Type: application/x-www-form-urlencoded',
-    ];
-
-    $ch = curl_init(self::SPOTIFY_TOKEN_URL);
+      // Prepare the cURL request.
+    $ch = curl_init($this->tokenEndpoint);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, [
+      'grant_type' => 'client_credentials',
+      'client_id' => $clientId,
+      'client_secret' => $clientSecret,
+    ]);
 
+    // Execute the request.
     $response = curl_exec($ch);
+
+    // Close the cURL session.
     curl_close($ch);
 
+    // Decode the JSON response.
     $data = json_decode($response, true);
 
+    // Check if the access token is present in the response.
     if (isset($data['access_token'])) {
-      $token = $data['access_token'];
-      $this->setToken($token);
-      return $token;
+      $this->logger->info('Access token obtained successfully.');
+      return $data['access_token'];
+    } else {
+      // Log error.
+      $this->logger->error('Error obtaining access token.');
+      return null;
     }
-
-    // Handle error or return null.
-    return null;
   }
 
-  /**
-   * Get cURL headers for Spotify API requests with access token.
-   *
-   * @return array
-   *   An array of headers.
-   */
-  public function spotifyApiToken() {
-    if ($this->getToken() != null) {
-      $token = $this->getToken();
-    } else {
-      $token = $this->accessWithCodeAuthorization();
-    }
+  public function getArtistInfo($artistId, $accessToken) {
+    // Example endpoint to get artist information
+    $artistEndpoint = "https://api.spotify.com/v1/artists/{$artistId}";
 
-    $headers = [
-      'headers' => [
-        'Accept' => 'application/json',
-        'Content-Type'=> 'application/json',
-        'Authorization' => 'Bearer ' . $token,
-      ],
-    ];
+    // Prepare the cURL request with the access token in headers.
+    $ch = curl_init($artistEndpoint);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+      'Authorization: Bearer ' . $accessToken,
+    ]);
 
-    return $headers;
+    // Execute the request.
+    $response = curl_exec($ch);
+
+    // Close the cURL session.
+    curl_close($ch);
+
+    // Decode the JSON response.
+    $artistData = json_decode($response, true);
+
+    // Handle the artist data as needed.
+
+    return $artistData;
+  }
+
+  public function getAlbumInfo($albumId, $accessToken) {
+    // Example endpoint to get album information
+    $albumEndpoint = "https://api.spotify.com/v1/albums/{$albumId}";
+
+    // Prepare the cURL request with the access token in headers.
+    $ch = curl_init($albumEndpoint);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+      'Authorization: Bearer ' . $accessToken,
+    ]);
+
+    // Execute the request.
+    $response = curl_exec($ch);
+
+    // Close the cURL session.
+    curl_close($ch);
+
+    // Decode the JSON response.
+    $albumData = json_decode($response, true);
+
+    // Handle the album data as needed.
+
+    return $albumData;
   }
 }

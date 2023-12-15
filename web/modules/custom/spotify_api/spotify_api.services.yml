@@ -1,4 +1,4 @@
 services:
   spotify_api.service:
-    class: Drupal\spotify_api\SpotifyApiServices
+    class: Drupal\spotify_api\SpotifyApiService
     arguments: ['@config.factory']
