@@ -14,3 +14,4 @@ class MusicSearchService
     $this->spotifyApiService = $spotifyApiService;
   }
 }
+
