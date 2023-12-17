@@ -1,7 +1,5 @@
 <?php
 
-
-
 namespace Drupal\spotify_api\Controller;
 
 use Drupal\Core\Controller\ControllerBase;

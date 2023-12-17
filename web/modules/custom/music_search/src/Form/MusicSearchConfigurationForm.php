@@ -4,11 +4,40 @@ namespace Drupal\music_search\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\spotify_api\SpotifyApiService;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Music search form.
  */
 class MusicSearchConfigurationForm extends ConfigFormBase {
+
+
+  /**
+   * The Spotify API service.
+   *
+   * @var \Drupal\spotify_api\SpotifyApiService
+   */
+  protected $spotifyApiService;
+
+  /**
+   * MusicSearchConfigurationForm constructor.
+   *
+   * @param \Drupal\spotify_api\SpotifyApiService $spotifyApiService
+   *   The Spotify API service.
+   */
+  public function __construct(SpotifyApiService $spotifyApiService) {
+    $this->spotifyApiService = $spotifyApiService;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('spotify_api.service')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -56,9 +85,11 @@ class MusicSearchConfigurationForm extends ConfigFormBase {
     return parent::buildForm($form, $form_state);
   }
 
+  /**
+   * Build the Spotify page.
+   */
   public function buildSpotifyPage(array $form, FormStateInterface $form_state) {
-    $form['#markup'] = $this->t('Display spotify content');
-    return $form;
+    
   }
 
   /**
@@ -82,10 +113,8 @@ class MusicSearchConfigurationForm extends ConfigFormBase {
     // Get the search data from the first page
     $searchData = $form_state->get('data');
 
-
     // Move to the second page
     $form_state->set('cpage', 2);
     $form_state->setRebuild(true);
-
   }
 }

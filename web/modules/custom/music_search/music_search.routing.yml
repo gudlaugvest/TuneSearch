@@ -1,15 +1,7 @@
 music_search.music_form:
   path: 'admin/config/music/search'
   defaults:
-    _form: 'Drupal\music_search\Form\MusicSearchConfigurationForm'
-    _title: 'Music Search Form'
-  requirements:
-    _permission: 'administer site configuration'
-
-music_search.spotify_page:
-  path: '/spotify/page'
-  defaults:
     _form: '\Drupal\music_search\Form\MusicSearchConfigurationForm'
-    _title: 'Spotify Page'
+    _title: 'Music Search Form'
   requirements:
     _permission: 'administer site configuration'

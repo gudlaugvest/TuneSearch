@@ -1,7 +1,7 @@
 name: Music Search
-description: 'Music Search Module'
+description: 'Search for Music'
 core_version_requirement: ^10
 type: module
 package: Custom
 dependencies:
-  - drupal:views
+  -drupal:views

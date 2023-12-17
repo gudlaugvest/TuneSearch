@@ -1,0 +1,5 @@
+services:
+  music_search.spotify_form:
+    class: Drupal\music_search\Form\MusicSearchConfigurationForm
+    arguments:
+      - 'spotify_api.service'

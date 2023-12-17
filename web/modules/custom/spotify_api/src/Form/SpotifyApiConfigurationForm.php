@@ -32,13 +32,10 @@ class SpotifyApiConfigurationForm extends ConfigFormBase
   {
     $config = $this->config('spotify_api.settings');
 
-    $client_id = $config->get('client_id');
-    $client_secret = $config->get('client_secret');
-
-    \Drupal::logger('spotify_api')->notice('Client ID: @client_id, Client Secret: @client_secret', [
-      '@client_id' => $client_id,
-      '@client_secret' => $client_secret,
-    ]);
+    # $client_id = $config->get('client_id');
+    # $client_secret = $config->get('client_secret');
+    $client_id = 'ce8e6245f83a46e69d46ec60d668c1c3';
+    $client_secret = '00d2ecb350454a8cbe844a4713799ce1';
 
     $form['client_id'] = [
       '#type' => 'textfield',
@@ -51,12 +48,11 @@ class SpotifyApiConfigurationForm extends ConfigFormBase
     $form['client_secret'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Client Secret'),
-      '#default_value' => 'hello world',
+      '#default_value' => $client_secret,
       '#description' => $this->t('Spotify API client secret.'),
       '#disabled' => true,
     ];
 
     return parent::buildForm($form, $form_state);
   }
-
 }

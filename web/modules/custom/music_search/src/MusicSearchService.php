@@ -1,17 +1,13 @@
 <?php
 
 namespace Drupal\music_search;
-
 use Drupal\spotify_api\SpotifyApiService;
 
-class MusicSearchService
-{
+class MusicSearchService {
 
-  protected $spotifyApiService;
+    protected $spotifyApiService;
 
-  public function __construct(SpotifyApiService $spotifyApiService)
-  {
-    $this->spotifyApiService = $spotifyApiService;
-  }
+    public function __construct(SpotifyApiService $spotifyApiService) {
+        $this->spotifyApiService = $spotifyApiService;
+    }
 }
-

@@ -1,23 +1,24 @@
 <?php
 
+// Declare the namespace.
 namespace Drupal\music_search\Controller;
+
+
+// Import the MusicSearchService class.
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\music_search\MusicSearchServices;
+use Drupal\music_search\MusicSearchService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/**
- * Controller for the Music Search site.
- */
-
 class MusicSearchController extends ControllerBase {
-  /**
-   * This is the Music Search Controller
-   * @return array
-   *  Music Search API
-   */
-  public function musicSearch() : array {
-    return [
-      '#markup' => $this->t('Search your music here'),
-    ];
-  }
+    /**
+     * Music Search Controller
+     * @return array
+     * Music Search API
+     */
+
+    public function musicSearch() {
+        return [
+            '#markup' => $this->t('Music Search API'),
+        ]
+    }
 }

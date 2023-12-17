@@ -28,5 +28,3 @@ use Drupal\Core\Routing\RouteMatchInterface;
   $config->set('client_secret', '');
   $config->save();
 }
-
-

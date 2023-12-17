@@ -10,6 +10,8 @@ class SpotifyApiService {
   private $tokenEndpoint = 'https://accounts.spotify.com/api/token';
   private $config;
   private $logger;
+  private $clientId = 'ce8e6245f83a46e69d46ec60d668c1c3';
+  private $clientSecret = '00d2ecb350454a8cbe844a4713799ce1';
 
   public function __construct(ConfigFactoryInterface $configFactory, LoggerInterface $logger) {
     $this->config = $configFactory->get('spotify_api.settings');
@@ -17,11 +19,9 @@ class SpotifyApiService {
   }
 
   public function getToken() {
-    $clientId = $this->config->get('client_id');
-    $clientSecret = $this->config->get('client_secret');
+    $clientId = $this->clientId;
+    $clientSecret = $this->clientSecret;
     \Drupal::logger('spotify_api')->notice('@client_id');
-
-
 
     $ch = curl_init($this->tokenEndpoint);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -63,7 +63,6 @@ class SpotifyApiService {
 
     $artistData = json_decode($response, true);
 
-
     return $artistData;
   }
 
@@ -81,7 +80,6 @@ class SpotifyApiService {
     curl_close($ch);
 
     $albumData = json_decode($response, true);
-
 
     return $albumData;
   }
