@@ -1,6 +1,6 @@
 services:
   music_search.service:
-    class: Drupal\music_search\Form\MusicSearchConfigurationForm
+    class: Drupal\music_search\Form\MusicSearchService
     arguments:
       - '@config.factory'
       - '@spotify_api.service'

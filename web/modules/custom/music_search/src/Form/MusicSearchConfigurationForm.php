@@ -7,6 +7,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\spotify_api\SpotifyApiService;
 
+use Drupal;
+
 class MusicSearchConfigurationForm extends ConfigFormBase {
 
   /**
@@ -19,10 +21,13 @@ class MusicSearchConfigurationForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
+
+
   public static function create(ContainerInterface $container): ConfigFormBase {
     $instance = parent::create($container);
-    $instance->$spotifyApiService = $container->get('spotify_api.service');
+    $instance->spotifyApiService = $container->get('spotify_api.service');
     return $instance;
+    ;
   }
 
   /**
@@ -53,6 +58,7 @@ class MusicSearchConfigurationForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => t('Search for an Artist'),
       '#description' => t('Please provide the name of an artist'),
+      '#required' => TRUE,
     ];
 
     // Search by Album
@@ -60,6 +66,7 @@ class MusicSearchConfigurationForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => t('Search for an Album'),
       '#description' => t('Please provide the title of an album'),
+      '#required' => TRUE,
     ];
 
     $form['next'] = [
@@ -75,18 +82,11 @@ class MusicSearchConfigurationForm extends ConfigFormBase {
    * Build the Spotify page.
    */
   public function buildSpotifyPage(array $form, FormStateInterface $form_state) {
-    $config = $this->config('music_search.custom_music_search');
-    $searchData = $form_state->get('data');
+    // ...
 
-    // Get the access token
-    $accessToken = $this->spotifyApiService->getToken();
-    Drupal::logger('music_search')->notice('Access Token: ' . $accessToken);
-
-    // Get the artist info
-    $artistData = $this->spotifyApiService->getArtistInfo($searchData['search_artist'], $accessToken);
-
-    // Get the album info
-    $albumData = $this->spotifyApiService->getAlbumInfo($searchData['search_album'], $accessToken);
+    // Get the artist info and album info from the form state
+    $artistData = $form_state->get('artist_data');
+    $albumData = $form_state->get('album_data');
 
     // Display the artist info
     $form['artist_info'] = [
@@ -97,21 +97,21 @@ class MusicSearchConfigurationForm extends ConfigFormBase {
     $form['artist_info']['artist_name'] = [
       '#type' => 'textfield',
       '#title' => t('Artist Name'),
-      '#default_value' => $artistData['name'],
+      '#default_value' => isset($artistData['name']) ? $artistData['name'] : '',
       '#disabled' => TRUE,
     ];
 
     $form['artist_info']['artist_image'] = [
       '#type' => 'image',
       '#title' => t('Artist Image'),
-      '#default_value' => $artistData['images'][0]['url'],
+      '#default_value' => isset($artistData['images'][0]['url']) ? $artistData['images'][0]['url'] : '',
       '#disabled' => TRUE,
     ];
 
     $form['artist_info']['artist_popularity'] = [
       '#type' => 'textfield',
       '#title' => t('Artist Popularity'),
-      '#default_value' => $artistData['popularity'],
+      '#default_value' => isset($artistData['popularity']) ? $artistData['popularity'] : '',
       '#disabled' => TRUE,
     ];
 
@@ -124,21 +124,21 @@ class MusicSearchConfigurationForm extends ConfigFormBase {
     $form['album_info']['album_name'] = [
       '#type' => 'textfield',
       '#title' => t('Album Name'),
-      '#default_value' => $albumData['name'],
+      '#default_value' => isset($albumData['name']) ? $albumData['name'] : '',
       '#disabled' => TRUE,
     ];
 
     $form['album_info']['album_image'] = [
       '#type' => 'image',
       '#title' => t('Album Image'),
-      '#default_value' => $albumData['images'][0]['url'],
+      '#default_value' => isset($albumData['images'][0]['url']) ? $albumData['images'][0]['url'] : '',
       '#disabled' => TRUE,
     ];
 
     $form['album_info']['album_popularity'] = [
       '#type' => 'textfield',
       '#title' => t('Album Popularity'),
-      '#default_value' => $albumData['popularity'],
+      '#default_value' => isset($albumData['popularity']) ? $albumData['popularity'] : '',
       '#disabled' => TRUE,
     ];
 
@@ -165,9 +165,7 @@ class MusicSearchConfigurationForm extends ConfigFormBase {
     return $form;
   }
 
-  /**
-   * {@inheritdoc}
-   */
+
   public function submitForm(array &$form, FormStateInterface $form_state) {
     // Save the data from the first page
     $searchData = $form_state->get('data');
@@ -175,23 +173,40 @@ class MusicSearchConfigurationForm extends ConfigFormBase {
 
     // Example: Save selected fields to the database (adjust as needed)
     foreach ($selectedFields as $fieldName => $value) {
-
+      if ($value) {
+        $this->config('music_search.custom_music_search')
+          ->set($fieldName, $searchData[$fieldName])
+          ->save();
+      }
     }
 
     // Redirect to the first page after saving data
     $form_state->setRedirect('music_search.spotify_page');
-  }
+}
 
   /**
    * Submit handler for the "Next" button.
    */
   public function spotifyPage(array &$form, FormStateInterface $form_state) {
     // Get the search data from the first page
-    $searchData = $form_state->get('data');
+    $searchData = $form_state->getValues();
+    
+    // Set the data in the form state
+    $form_state->set('data', $searchData);
+
+    // Make a call to the Spotify API and retrieve data
+    $accessToken = $this->spotifyApiService->getToken();
+    $artistData = $this->spotifyApiService->getArtistInfo($searchData['search_artist'], $accessToken);
+    $albumData = $this->spotifyApiService->getAlbumInfo($searchData['search_album'], $accessToken);
+
+    // Set the retrieved data in the form state
+    $form_state->set('artist_data', $artistData);
+    $form_state->set('album_data', $albumData);
 
     // Move to the second page
     $form_state->set('cpage', 2);
     $form_state->setRebuild(true);
   }
+
 
 }
