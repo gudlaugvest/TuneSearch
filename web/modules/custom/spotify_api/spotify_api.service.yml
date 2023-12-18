@@ -3,4 +3,3 @@ services:
     class: Drupal\spotify_api\SpotifyApiService
     arguments:
       - '@config.factory'
-      - '@logger.channel.spotify_api'
