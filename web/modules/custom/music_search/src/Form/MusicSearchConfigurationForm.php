@@ -68,24 +68,10 @@ class MusicSearchConfigurationForm extends ConfigFormBase {
         '#value' => 'Next',
         '#submit' => ['::submitForm'],
       ];
+      
     } elseif ($page === 2) {
-      // Display the entered search data
-      $form['search_artist'] = [
-        '#type' => 'textfield',
-        '#title' => t('Search for an Artist'),
-        '#default_value' => $form_state->get('search_data')['search_artist'],
-        '#disabled' => TRUE,
-      ];
-
-      $form['search_album'] = [
-        '#type' => 'textfield',
-        '#title' => t('Search for an Album'),
-        '#default_value' => $form_state->get('search_data')['search_album'],
-        '#disabled' => TRUE,
-      ];
-
-      // Display Spotify data
-      $form += $this->buildSpotifyPage($form, $form_state);
+      // Build the Spotify page
+      $form = $this->buildSpotifyPage($form, $form_state);
     }
 
     return parent::buildForm($form, $form_state);
@@ -100,26 +86,23 @@ class MusicSearchConfigurationForm extends ConfigFormBase {
   
       // Make a call to the Spotify API and retrieve data
       $accessToken = $this->spotifyApiService->getToken();
-      $artistData = $this->spotifyApiService->getArtistInfo($searchData['search_artist'], $accessToken);
-      $albumData = $this->spotifyApiService->getAlbumInfo($searchData['search_album'], $accessToken);
-  
-      // Set the retrieved data and the entered search data in the form state
-      $form_state->set('artist_data', $artistData);
-      $form_state->set('album_data', $albumData);
-      $form_state->set('search_data', $searchData);
-    } elseif ($page === 2) {
-      // Save the data from the second page
-      $searchData = $form_state->get('search_data');
-      $selectedFields = $form_state->getValue('save_fields');
+      
+      // Get the artist ID from the provided artist name
+      $artistName = $searchData['search_artist'];
+      $artistId = $this->spotifyApiService->getArtistIdByName($artistName, $accessToken);
 
-      // Example: Save selected fields to the database (adjust as needed)
-      foreach ($selectedFields as $fieldName => $value) {
-        if ($value) {
-          $this->config('music_search.custom_music_search')
-            ->set($fieldName, $searchData[$fieldName])
-            ->save();
-        }
+      if ($artistId) {
+        // Artist ID found, you can use it as needed
+        \Drupal::logger('spotify_api')->notice('Artist ID: ' . $artistId);
+      } else {
+        // Handle the case where the artist ID couldn't be found
+        \Drupal::logger('spotify_api')->error('Unable to retrieve Artist ID for: ' . $artistName);
+        // You might want to set a form error or take other appropriate actions
       }
+
+      // Rest of your existing code...
+    } elseif ($page === 2) {
+      // Rest of your existing code...
     }
 
     // Redirect to the next page or stay on the same page

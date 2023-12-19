@@ -5,3 +5,19 @@ music_search.music_form:
     _title: 'Music Search Form'
   requirements:
     _permission: 'administer site configuration'
+
+# music_search.autocomplete_artist:
+#   path: '/music_search/autocomplete/artist'
+#   defaults:
+#     _controller: '\Drupal\music_search\Controller\MusicSearchAutocompleteController::autocompleteArtist'
+#     _format: 'json'
+#   requirements:
+#     _permission: 'access content'
+
+# music_search.autocomplete_album:
+#   path: '/music_search/autocomplete/album'
+#   defaults:
+#     _controller: '\Drupal\music_search\Controller\MusicSearchAutocompleteController::autocompleteAlbum'
+#     _format: 'json'
+#   requirements:
+#     _permission: 'access content'

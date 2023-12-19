@@ -60,6 +60,7 @@ class SpotifyApiService {
     }
 
     $accessToken = $data['access_token'];
+
     if (isset($accessToken)) {
         \Drupal::logger('spotify_api')->notice('Access Token: ' . $accessToken);
     } else {
@@ -107,5 +108,46 @@ class SpotifyApiService {
     $albumData = json_decode($response, true);
 
     return $albumData;
+  }
+
+  /**
+   * Get the artist ID based on the artist name.
+   *
+   * @param string $artistName
+   *   The name of the artist.
+   * @param string $accessToken
+   *   The Spotify API access token.
+   *
+   * @return string|null
+   *   The artist ID or null if not found.
+   */
+  public function getArtistIdByName($artistName, $accessToken) {
+    // Search for the artist using the Spotify API search endpoint
+    $searchEndpoint = 'https://api.spotify.com/v1/search';
+    $query = http_build_query([
+        'q' => $artistName,
+        'type' => 'artist',
+    ]);
+
+    $url = $searchEndpoint . '?' . $query;
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+      'Authorization: Bearer ' . $accessToken,
+    ]);
+
+    $response = curl_exec($ch);
+
+    curl_close($ch);
+
+    $data = json_decode($response, true);
+
+    // Extract the artist ID from the search results
+    if (isset($data['artists']['items'][0]['id'])) {
+      return $data['artists']['items'][0]['id'];
+    } else {
+      return null;
+    }
   }
 }
