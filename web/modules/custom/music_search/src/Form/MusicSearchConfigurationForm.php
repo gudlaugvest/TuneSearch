@@ -108,13 +108,6 @@ class MusicSearchConfigurationForm extends ConfigFormBase {
       '#disabled' => TRUE,
     ];
 
-    $form['artist_info']['artist_popularity'] = [
-      '#type' => 'textfield',
-      '#title' => t('Artist Popularity'),
-      '#default_value' => isset($artistData['popularity']) ? $artistData['popularity'] : '',
-      '#disabled' => TRUE,
-    ];
-
     // Display the album info
     $form['album_info'] = [
       '#type' => 'fieldset',
@@ -149,10 +142,6 @@ class MusicSearchConfigurationForm extends ConfigFormBase {
       '#options' => [
         'artist_name' => t('Artist Name'),
         'artist_image' => t('Artist Image'),
-        'artist_popularity' => t('Artist Popularity'),
-        'album_name' => t('Album Name'),
-        'album_image' => t('Album Image'),
-        'album_popularity' => t('Album Popularity'),
       ],
     ];
 
